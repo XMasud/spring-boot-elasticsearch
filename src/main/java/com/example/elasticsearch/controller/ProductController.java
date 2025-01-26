@@ -1,6 +1,7 @@
 package com.example.elasticsearch.controller;
 
 import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.example.elasticsearch.entity.Product;
 import com.example.elasticsearch.service.ProductService;
 import com.example.elasticsearch.service.SearchService;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +23,7 @@ public class ProductController {
     private SearchService searchService;
 
     @GetMapping
-    Iterable<Product> findAllProduct(){
+    Iterable<Product> findAllProduct() {
         return productService.getAllProduct();
     }
 
@@ -36,8 +38,14 @@ public class ProductController {
     }
 
     @GetMapping("/match")
-    String match() throws IOException {
-        SearchResponse<Map>  searchResponse = searchService.matchAllServices();
-        return searchResponse.hits().hits().toString();
+    public List<Product> matchProducts() throws IOException {
+        SearchResponse<Product> searchResponse = searchService.matchAllServices();
+        List<Hit<Product>> listOfHits = searchResponse.hits().hits();
+        List<Product> productList = new ArrayList<>();
+
+        for (Hit<Product> hit : listOfHits) {
+            productList.add(hit.source());
+        }
+        return productList;
     }
 }
