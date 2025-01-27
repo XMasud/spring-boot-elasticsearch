@@ -5,6 +5,8 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.example.elasticsearch.entity.Product;
 import com.example.elasticsearch.service.ProductService;
 import com.example.elasticsearch.service.SearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +18,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/product")
 public class ProductController {
+
+    Logger logger = LoggerFactory.getLogger(ProductController.class);
+
     @Autowired
     private ProductService productService;
 
@@ -24,6 +29,7 @@ public class ProductController {
 
     @GetMapping
     Iterable<Product> findAllProduct() {
+        logger.info("Query for all product");
         return productService.getAllProduct();
     }
 
@@ -34,6 +40,7 @@ public class ProductController {
 
     @GetMapping("/{name}")
     public List<Product> getProductsByName(@PathVariable String name) {
+        logger.info("Product Searched {}",name);
         return productService.findByName(name);
     }
 
